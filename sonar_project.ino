@@ -9,9 +9,12 @@ Servo myServo;
 //ultrasonic sensor
 int trigger_pin = 8;
 int echo_pin = 9;
-int ping_echo_time;
+unsigned long ping_echo_time;
 float sound_speed = 0.034;
 float distance;
+
+//buzzer
+int buzzer_pin = 5;
 
 int flag=0;
 
@@ -32,17 +35,23 @@ float ultrasonic_sensor_read(){
 void setup() {
   Serial.begin(9600);
   myServo.attach(servo_control_pin);
-
   pinMode(trigger_pin, OUTPUT);
   pinMode(echo_pin, INPUT);
+  pinMode(buzzer_pin, OUTPUT);
+
 }
 
 void loop() {
   myServo.write(servo_position);
   distance=ultrasonic_sensor_read();
   if(distance < 100){
+    tone(buzzer_pin, 1000);
     Serial.println("Object has been detected!");
-    Serial.println(distance);  
+    Serial.println(distance); 
+  }
+
+  if(distance > 100){
+    noTone(buzzer_pin); 
   }
 
   if(flag == 0){
@@ -58,5 +67,4 @@ void loop() {
   }
 
   delay(200);
-
 }
